@@ -1,5 +1,4 @@
 from torch.utils.data import Dataset, DataLoader
-import numpy as np
 import os
 import cv2
 import torchvision.transforms as transforms
@@ -62,9 +61,9 @@ class UAVidDataset(Dataset):
         return files_list
 
 
-class DataModule(pl.LightningDataModule):
+class UAVidDataModule(pl.LightningDataModule):
     def __init__(self, data_path: str = 'data', batch_size: int = 4, num_workers: int = 4):
-        super(DataModule, self).__init__()
+        super(UAVidDataModule, self).__init__()
         
         self.batch_size = batch_size
         self.num_workers = num_workers
