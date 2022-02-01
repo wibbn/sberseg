@@ -85,22 +85,5 @@ class FastFCN(pl.LightningModule):
     
     def configure_optimizers(self):
         opt = torch.optim.Adam(self.parameters(), lr = self.learning_rate)
-        # sch = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max = 10)
         sch = torch.optim.lr_scheduler.StepLR(opt, step_size=2)
         return [opt], [sch]
-
-
-if __name__ == '__main__':
-    in_batch, inchannel, in_h, in_w = 4, 3, 128, 128
-    x = torch.randn(in_batch, inchannel, in_h, in_w)
-    net = FastFCN(num_classes=8)
-    # out = net(x)
-    # print(out.shape)
-    # print(out[0])
-    
-    a = [i for i in net.parameters()]
-    b = [i for i in net.resnet50.parameters()]
-    c = [i for i in net.jpu.parameters()]
-    d = [i for i in net.head.parameters()]
-
-    print(len(a), len(b), len(c), len(d), len(b) + len(c) + len(d))

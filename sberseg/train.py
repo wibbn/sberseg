@@ -1,6 +1,8 @@
 from typing import Optional
+import uuid
 import pytorch_lightning as pl
 import wandb
+import torch
 from pytorch_lightning.loggers import WandbLogger
 
 from sberseg.data import UAVidDataModule
@@ -39,4 +41,6 @@ def train(model: pl.LightningModule, wandb_api_key: Optional[str] = None, gpus: 
     )
 
     trainer.fit(model, dm)
-
+    
+    modelname = f'{uuid.uuid4().hex}.png'
+    torch.save(model.state_dict(), f'{config.checkpoints.path}/model-{modelname}.pth')

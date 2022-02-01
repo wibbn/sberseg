@@ -21,12 +21,7 @@
 
 You can use docker or your native environment to run this code.
 
-For run this project with docker you need to run some commands in your terminal:
-1. Build docker image
-```bash
-docker build -t sberseg .
-```
-2. Run docker image with executable command at the end. For example
+For run this project with docker you need to run some commands in your terminal. Run docker-compose with executable command at the end. For example
 ```bash
 docker-compose run sberseg \
 python sberseg/main.py --model FCN --stage inference --checkpoint checkpoints/fcn.pth --image data/uavid_test/seq21/Images/000000.png
