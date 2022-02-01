@@ -23,4 +23,3 @@ VOLUME [ "/workdir/data" ]
 
 COPY ./config.yaml /workdir
 COPY ./params.yaml /workdir
-COPY ./scripts /workdir/scripts
