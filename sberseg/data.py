@@ -1,8 +1,9 @@
 from torch.utils.data import Dataset, DataLoader
 import os
 import cv2
-import torchvision.transforms as transforms
 import pytorch_lightning as pl
+
+from sberseg.utils.data import data_transform
 
 
 class UAVidDataset(Dataset):
@@ -68,14 +69,9 @@ class UAVidDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
         self.num_workers = num_workers
         
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean = [0.35675976, 0.37380189, 0.3764753], std = [0.32064945, 0.32098866, 0.32325324])
-        ])
-
-        self.train_dataset = UAVidDataset(data_path, 'train', transform)
-        self.val_dataset = UAVidDataset(data_path, 'val', transform)
-        self.test_dataset = UAVidDataset(data_path, 'test', transform)
+        self.train_dataset = UAVidDataset(data_path, 'train', data_transform)
+        self.val_dataset = UAVidDataset(data_path, 'val', data_transform)
+        self.test_dataset = UAVidDataset(data_path, 'test', data_transform)
 
     def train_dataloader(self):
         return DataLoader(
