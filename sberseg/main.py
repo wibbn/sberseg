@@ -9,9 +9,10 @@ from sberseg.test import test
 @click.command()
 @click.option('-m', '--model', 'model_name', type=click.Choice(['FCN', 'FastFCN'], case_sensitive=False), required=True)
 @click.option('-s', '--stage', type=click.Choice(['train', 'test', 'inference'], case_sensitive=False), required=True)
-@click.option('-c', '--checkpoint', 'model_checkpoint', type='str')
-@click.option('-i', '--image', 'image_path', type='str')
-def main(model_name: str, stage: str, model_checkpint: Optional[str] = None, image_path: Optional[str] = None):
+@click.option('-c', '--checkpoint', 'model_checkpoint', type=str)
+@click.option('-i', '--image', 'image_path', type=str)
+@click.option('--gpu', 'gpus', type=bool)
+def main(model_name: str, stage: str, model_checkpoint: Optional[str] = None, image_path: Optional[str] = None, gpus: bool = False):
     from sberseg.models import FCN, FastFCN
 
     model=None
@@ -26,12 +27,14 @@ def main(model_name: str, stage: str, model_checkpint: Optional[str] = None, ima
             learning_rate=params.model.FastFCN.learning_rate
         )
 
+    gpus = 1 if gpus else 0
+
     if stage == 'train':
-        train(model)
+        train(model, gpus=gpus)
     elif stage == 'test':
-        test(model, state_dict_path=model_checkpint)
+        test(model, state_dict_path=model_checkpoint, gpus=gpus)
     elif stage == 'inference':
-        inference(model, state_dict_path=model_checkpint, image_path=image_path)
+        inference(model, state_dict_path=model_checkpoint, image_path=image_path)
     
 
 if __name__ == '__main__':

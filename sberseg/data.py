@@ -28,7 +28,7 @@ class UAVidDataset(Dataset):
     
     def __getitem__(self, idx):
         img = cv2.imread(self.img_list[idx])
-        img = cv2.resize(img, (960, 540), )
+        img = cv2.resize(img, (960, 540))
 
         if self.transform:
             img = self.transform(img)
