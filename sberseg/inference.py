@@ -1,7 +1,7 @@
-from typing import Optional
 import torch
 import pytorch_lightning as pl
-from sberseg.utils.data import get_single_image
+from sberseg.utils.data import get_blended_output, get_single_image, save_image
+from sberseg.config import config
 
 def inference(model: pl.LightningModule, state_dict_path: str, image_path: str):
 
@@ -12,4 +12,6 @@ def inference(model: pl.LightningModule, state_dict_path: str, image_path: str):
     with torch.no_grad():
         out = model(img)[0]
 
-    print(out.shape)
+    save_path = save_image(get_blended_output(img[0], out), config.media.output_dir)
+
+    print(f'You can find the markup result image here {save_path} . Enjoy it!')
