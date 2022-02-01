@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  sberseg:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./data:/workdir/data
+      - ./logs:/workdir/logs
+      - ./checkpoints:/workdir/checkpoints
