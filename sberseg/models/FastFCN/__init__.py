@@ -5,13 +5,16 @@ import pytorch_lightning as pl
 
 from sberseg.models.FastFCN.resnet import Bottleneck, ResNet
 from sberseg.models.FastFCN.parts import JPU, Head
+from sberseg.utils.metrics import SegmentationMetric
 
+from sberseg.utils.data import wb_image
 
 class FastFCN(pl.LightningModule):
-    def __init__(self, num_classes, learning_rate=1e-3, bn_momentum=0.01):
+    def __init__(self, num_classes=8, learning_rate=1e-3, bn_momentum=0.01):
         super(FastFCN, self).__init__()
 
         self.learning_rate = learning_rate
+        self.metrics = SegmentationMetric(num_classes)
 
         self.resnet50 = ResNet(
             block=Bottleneck,
@@ -20,8 +23,11 @@ class FastFCN(pl.LightningModule):
             bn_momentum=bn_momentum,
             is_fpn=True
         )
+
         self.jpu = JPU([512, 1024, 2048], width=512, norm_layer=nn.BatchNorm2d)
         self.head = Head(num_classes, norm_layer=nn.BatchNorm2d)
+
+        self.save_hyperparameters('num_classes', 'learning_rate')
 
     def forward(self, input):
         blocks = self.resnet50(input)
@@ -42,17 +48,38 @@ class FastFCN(pl.LightningModule):
     def training_step_end(self, outs):
         self.log("train/loss", outs['loss'])
 
+    def log_images(self, imgs, masks):
+        log_imgs = []
+        for i, m in zip(imgs, masks):
+            log_imgs.append(wb_image(i, m))
+        self.logger.experiment.log({'val/imgs': log_imgs})
+
     def validation_step(self, batch, batch_nb) :
         img, mask = batch
         img = img.float()
         mask = mask.long()
         out = self.forward(img)
 
+        self.metrics.update(mask, out)
+        self.log_images(img, out)
+
         loss_val = F.cross_entropy(out, mask, ignore_index = 250)
         return {'loss' : loss_val}
     
     def validation_step_end(self, outs):
+        pixacc, miou = self.metrics.get()
+
         self.log("val/loss", outs['loss'])
+        self.log("val/pixAcc", pixacc)
+        self.log("val/mIoU", miou)
+
+        self.metrics.reset()
+
+    def test_step(self, img, batch_nb):
+        img = img.float()
+        out = self.forward(img)
+
+        self.log_images(img, out)
     
     def configure_optimizers(self):
         opt = torch.optim.Adam(self.parameters(), lr = self.learning_rate)
