@@ -2,9 +2,18 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,jupyternotebooks
 
-/data
-/temp
-logs/wandb
+data/*
+!data/output
+data/output/*
+!data/output/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+checkpoints/*
+!checkpoints/.gitkeep
+
+temp
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks

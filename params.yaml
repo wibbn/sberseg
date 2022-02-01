@@ -8,4 +8,4 @@ data:
   num_classes: 8
   path: ./data
 learning:
-  epochs: 2
+  epochs: 5

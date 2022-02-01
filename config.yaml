@@ -2,3 +2,5 @@ wandb:
   project_name: sberseg
   api_key: !env WANDB_API_KEY
   log_dir: logs
+media:
+  output_dir: data/output
