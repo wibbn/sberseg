@@ -4,3 +4,5 @@ wandb:
   log_dir: logs
 media:
   output_dir: data/output
+checkpoints:
+  path: checkpoints
